@@ -1,54 +1,53 @@
-pipeline { 
-  agent any
-    
-    tools { 
-        // Define the JDK and Maven tools to be used 
-        jdk 'JDK11' maven
-        'Maven3' 
+  pipeline {
+    agent any
+    tools {
+    maven "MAVEN3"
+    jdk "oracleJDK17"
     }
     
-    stages { 
-        stage('Checkout') { 
-          steps { 
-                // Checkout the code from your source
-                control repository git 'https://your-repository-url.git' 
-          } 
-        }
-    
-        stage('Build') { 
-          steps { 
-            // Clean and build the project 
-            sh 'mvn clean install -DskipTests' 
-          } 
-        }
-    
-        stage('Test') { 
-          steps { 
-            // Run the tests sh 'mvn test' 
-          } 
-        }
-    
-        stage('Package') { 
-          steps { 
-            // Package the application 
-            sh 'mvn package' 
-          } 
-        }
-    
-        stage('Deploy') { 
-          steps { 
-            // Deploy the application (this can be customized based on your deployment process) 
-            sh 'scp target/your-app.jar user@your-server:/path/to/deploy' 
-          } 
-        } 
-    }
-    
-    post { 
-      success { 
-          echo 'Build succeeded!' 
-      } 
-      failure { 
-          echo 'Build failed!' 
-      } 
-    }
-}
+    stages {
+    stage('Checkout') {
+    steps {
+    // Checkout the code from your source
+      git branch: 'main', url: 'https://github.com/EnockBrown/car_clinic.git'
+      }
+      }
+
+        stage('Build') {
+        steps {
+        // Clean and build the project
+        sh 'mvn clean install -DskipTests'
+      }
+      }
+
+        stage('Test') {
+        steps {
+        // Run the tests
+        sh 'mvn test'
+      }
+      }
+
+        stage('Package') {
+        steps {
+        // Package the application
+        sh 'mvn package'
+      }
+      }
+
+        //  stage('Deploy') {
+        //  steps {
+        // Deploy the application (this can be customized based on your deployment process)
+        //sh 'scp target/your-app.jar user@your-server:/path/to/deploy'
+        //}
+        //}
+      }
+
+        post {
+        success {
+        echo 'Build succeeded!'
+      }
+        failure {
+        echo 'Build failed!'
+      }
+      }
+  }
