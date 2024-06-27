@@ -18,10 +18,9 @@ spring:
   jpa:
     show-sql: true
   datasource:
-    url: jdbc:postgresql://127.0.0.1:5432/postgres
-    DATABASE_URL: postgres://u9qpts5k9ot20i:p3e46dd9ecc8158f1fa4eaae4f0975c0eea59b6fb9a458c79a8a476bf7e305023@ceu9lmqblp8t3q.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/dc8mqb3e7ftvvu
+    DATABASE_URL: car-clinic.c7qmoioqshab.eu-north-1.rds.amazonaws.com:5432/car_clinic
     username: postgres
-    password: postgres
+    password: KV2Wtug6yuZXYbOyU1Km
   hibernate:
     ddl-auto: update
   h2:
