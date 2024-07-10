@@ -41,7 +41,60 @@ pipeline {
              //   sh 'scp target/your-app.jar user@your-server:/path/to/deploy'
             //} 
        // }
+       stage('Check Style Analysis'){
+        steps{
+            sh 'mvn checkstyle:checkstyle'
+        }
+       }
 
+
+        stage('Sonar Analysis') {
+            environment {
+                scannerHome = tool 'sonar4.7'
+                SONAR_SCANNER_OPTS = '--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED'
+            }
+            steps {
+               withSonarQubeEnv('sonar') {
+                   sh '''${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=car_clinic \
+                   -Dsonar.projectName=car_clinic \
+                   -Dsonar.projectVersion=1.0 \
+                   -Dsonar.sources=src/ \
+                   -Dsonar.java.binaries=target/test-classes/com/example/carclinic/ \
+                   -Dsonar.junit.reportsPath=target/surefire-reports/ \
+                   -Dsonar.jacoco.reportsPath=target/jacoco.exec \
+                   -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml \
+                   -Dsonar.scanner.opj=--add-opens=java.base/java.lang=ALL-UNNAMED \
+                   -Dsonar.scanner.opj=--add-opens=java.base/java.net=ALL-UNNAMED \
+                   -Dsonar.scanner.opj=--add-opens=java.base/java.nio=ALL-UNNAMED'''
+              }
+            }
+        }
+
+        stage("QUality Gate"){
+            steps{
+                timeout(time: 1, unit: 'HOURS'){
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+
+        stage("UploadArtifact"){
+            steps{
+                nexusArtifactUploader(
+                  nexusVersion: 'nexus3',
+                  protocol: 'http',
+                  nexusUrl: '172.31.29.213:8081',
+                  groupId: 'QA',
+                  version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
+                  repository: 'car-clinic-repo',
+                  credentialsId: 'nexuslogin',
+                  artifacts: [
+                    [artifactId: 'carclininicapp',
+                     classifier: '',
+                     file: 'target/carclinic-0.0.1-SNAPSHOT.jar',
+                     type: 'jar']])
+            }
+        }
     }
 
     post { 
