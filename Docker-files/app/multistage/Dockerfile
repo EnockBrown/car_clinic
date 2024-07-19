@@ -1,4 +1,4 @@
-FROM openjdk:11 AS build_image
+FROM openjdk:17 AS build_image
 RUN sudo apt update
 RUN sudo apt install maven -y
 RUN git clone https://github.com/devopshydclub/vprofile-project.git
