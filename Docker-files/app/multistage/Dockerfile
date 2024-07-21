@@ -1,14 +1,13 @@
 # First Stage: Build the application using Maven
-FROM openjdk:17 AS build_image
+FROM openjdk:17-jdk AS build_image
 
-# Install necessary packages and clone the repository
-RUN apt update && \
-    apt install -y maven git && \
-    git clone https://github.com/devopshydclub/vprofile-project.git
+# Install git and clone the repository
+RUN git clone https://github.com/devopshydclub/vprofile-project.git
 
 # Set the working directory and checkout the correct branch
 WORKDIR /vprofile-project
 RUN git checkout docker && \
+    apt install -y maven && \
     mvn install --batch-mode
 
 # Second Stage: Deploy the application in a Tomcat server
